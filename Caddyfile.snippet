@@ -1,0 +1,11 @@
+# Add this block to the shared Caddyfile that already proxies
+# api.asiapharmsg.com (in the cust-admin-BE repo's caddy/Caddyfile).
+# Only one Caddy instance can hold host ports 80/443 on the VM, so both
+# domains must be served from that same instance/compose project.
+#
+# "frontend" here is this repo's docker-compose service name — it resolves
+# because this container joins the same ap_net Docker network as Caddy.
+
+asiapharmsg.com, www.asiapharmsg.com {
+    reverse_proxy frontend:3000
+}

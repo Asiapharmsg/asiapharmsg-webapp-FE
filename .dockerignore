@@ -1,0 +1,16 @@
+node_modules
+.next
+out
+.git
+.gitignore
+.vscode
+.DS_Store
+**/.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+README.md
+LICENSE
+
+# local backup/export archives, never needed in the image
+*.zip

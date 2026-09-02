@@ -1,0 +1,49 @@
+.cart-plus-minus {
+    padding: 10px 0;
+
+    border-bottom: 2px solid $grey--eleven;
+    button {
+        font-size: 20px;
+        font-weight: 500;
+
+        padding: 0;
+
+        color: $black--two;
+        border: none;
+        background: none;
+    }
+    input {
+        font-size: 16px;
+        font-weight: 500;
+
+        width: 80px;
+        margin-bottom: 0;
+        padding: 0 15px;
+
+        text-align: center;
+        vertical-align: middle;
+
+        color: $black--two;
+        border: none;
+    }
+}
+.product {
+    display: inline-flex;
+}
+
+.addressType {
+  @include respond(extra-small-mobile) {
+    display: block !important;
+
+    >div {
+      display: flex;
+      align-items: center;
+      padding: 0 !important;
+      margin-bottom: 10px;
+
+      .badge {
+        font-weight: normal;
+      }
+    }
+  }
+}

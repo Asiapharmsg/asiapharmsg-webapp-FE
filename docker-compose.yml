@@ -1,0 +1,21 @@
+version: "3.7"
+
+services:
+  frontend:
+    build: .
+    image: ap-frontend:latest
+    restart: unless-stopped
+    environment:
+      PORT: 3000
+    expose:
+      - "3000"
+    networks:
+      - ap_net
+
+# Shared with the backend stack so the Caddy container there can reach this
+# service by name. Must already exist on the VM (created by whichever compose
+# project starts first) — create it manually first if neither has yet:
+#   docker network create ap_net
+networks:
+  ap_net:
+    external: true

@@ -1,0 +1,27 @@
+import { useQueryClient, useMutation } from 'react-query';
+import { BASE_URL } from '../../utils';
+import { useToasts } from 'react-toast-notifications';
+
+export default function useAddProduct() {
+  const queryClient = useQueryClient();
+  const { addToast } = useToasts();
+
+  const addProduct = async (product) => {
+    console.log("useAddProduct - API CALL",product);
+    const res = await fetch(`${BASE_URL}/api/products`, {
+      method: 'POST',
+      body: product,
+    });
+    const data = await res?.json();
+    // console.log('data', data);
+  };
+  return useMutation(addProduct, {
+    onSuccess: async (res, variables, context) => {
+      addToast('Product added successfully', { appearance: 'success', autoDismiss: true });
+      queryClient.refetchQueries('products');
+    },
+    onError: (err, variables, context) => {
+        addToast("Error adding product", { appearance: 'error' });
+    }
+  });
+}

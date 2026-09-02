@@ -1,0 +1,370 @@
+/*=============================================
+=            my account            =
+=============================================*/
+
+.loader_container {
+  padding: 30px;
+  border: 1px solid $grey--ten;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @include respond(large-mobile) {
+    padding: 20px 15px;
+  }
+}
+
+.my-account-area {
+  @include respond(extra-small-mobile) {
+    margin: 30px 0 !important;
+  }
+
+  &__navigation {
+    @include respond(extra-small-mobile) {
+      margin-bottom: 20px;
+    }
+
+    .nav-item {
+      .nav-link {
+        font-size: 13px;
+        font-weight: 400;
+
+        display: inline-block;
+
+        margin-right: 5px;
+        padding: 15px 10px;
+
+        text-transform: capitalize;
+
+        border-radius: 0;
+        &:hover,
+        &.active {
+          color: $white;
+          border-color: $black--two;
+          background-color: $black--two;
+        }
+
+        @include respond(extra-small-mobile) {
+          padding: 8px 12px;
+        }
+      }
+      &:last-child {
+        .nav-link {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+
+  &__content {
+    padding: 30px;
+
+    border: 1px solid $grey--ten;
+
+    @include respond(large-mobile) {
+      padding: 20px 15px;
+    }
+
+    p {
+      line-height: 1.3;
+
+      @include respond(extra-small-mobile) {
+        font-size: 14px;
+      }
+    }
+
+    form {
+      margin-top: -20px;
+    }
+    h3 {
+      font-size: 20px;
+      font-weight: 600;
+
+      margin-bottom: 25px;
+      padding-bottom: 10px;
+
+      border-bottom: 1px dashed $grey--eleven;
+
+      @include respond(extra-small-mobile) {
+        font-size: 18px;
+      }
+    }
+    .welcome {
+      a {
+        &:hover {
+          color: $black--two;
+        }
+      }
+      strong {
+        font-weight: 600;
+
+        color: $black--two;
+      }
+
+      @include respond(extra-small-mobile) {
+        font-size: 14px;
+      }
+    }
+    fieldset {
+      margin-top: 20px;
+      & legend {
+        font-size: 16px;
+        font-weight: 600;
+
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+
+        border-bottom: 1px solid $grey--eleven;
+      }
+    }
+    .account-details-form {
+      margin-top: 50px;
+
+      @include respond(extra-small-mobile) {
+        form {
+          > .single-input-item {
+            margin: 0 !important;
+          }
+        }
+      }
+
+      .single-input-item {
+        margin-bottom: 20px;
+        label {
+          font-size: 14px;
+
+          display: block;
+
+          margin: 0 0 5px;
+
+          text-transform: capitalize;
+        }
+        input {
+          font-size: 13px;
+
+          width: 100%;
+          height: 50px;
+          padding: 2px 20px;
+
+          color: $black--two;
+          border: 1px solid $grey--nineteen;
+          background-color: transparent;
+          &:focus {
+            border: 1px solid $black--two;
+          }
+          &:disabled {
+            background-color: $grey--twentyEight;
+          }
+
+          @include respond(extra-small-mobile) {
+            height: 42px;
+            padding: 2px 12px;
+          }
+        }
+
+        button {
+          font-size: 13px;
+          font-weight: 600;
+
+          padding: 15px 25px;
+
+          text-transform: uppercase;
+
+          color: $white;
+          border: none;
+          background-color: $black--two;
+          &:hover {
+            background-color: $black--two;
+          }
+
+          @include respond(extra-small-mobile) {
+            padding: 12px 20px;
+          }
+        }
+      }
+    }
+
+    .filter-dropdown {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+
+      .filterItem {
+        margin-right: 24px;
+
+        label {
+          font-size: 14px;
+        }
+
+        select {
+          border: 1px solid #ddd;
+          border-radius: 0px;
+          padding: 8px 10px;
+          font-size: 14px;
+        }
+
+        label {
+          margin-right: 15px;
+        }
+      }
+      @include respond(extra-small-mobile) {
+        display: block;
+
+        select {
+          width: 100%;
+        }
+
+        .filterItem {
+          margin-bottom: 15px;
+          margin-right: 0;
+        }
+      }
+    }
+
+    .remarks-field {
+      input {
+        width: 125px;
+        padding: 0.5rem 0.25rem;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+      }
+    }
+
+    .product-widget-container {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      margin-left: auto;
+      gap: 15px;
+    }
+  }
+
+  &__picture-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+    margin-bottom: 50px;
+    box-sizing: border-box;
+
+    @include respond(extra-small-mobile) {
+      padding: 0;
+    }
+
+    .profile-picture {
+      img {
+        height: 250px;
+        width: 225px;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        max-width: 100%;
+
+        @include respond(extra-small-mobile) {
+          height: auto;
+        }
+      }
+
+      &-buttons {
+        display: flex;
+        flex-direction: column;
+        margin-left: 2rem;
+        padding: 1rem;
+        button,
+        label {
+          font-size: 13px;
+          font-weight: 600;
+          padding: 15px 25px;
+          text-transform: uppercase;
+          color: $white;
+          border: none;
+          background-color: $black--two;
+          margin-bottom: 0.5rem;
+          transition: 0.3s ease;
+          &:hover {
+            color: $black--two;
+            background-color: white;
+            border: 1px solid $black--two;
+          }
+
+          @include respond(extra-small-mobile) {
+            padding: 10px 12px;
+          }
+        }
+
+        @include respond(extra-small-mobile) {
+          padding: 0;
+          margin-left: 15px;
+        }
+
+        input[type='file'] {
+          display: none;
+        }
+
+        .upload-button {
+          color: $black--two;
+          background-color: white;
+          border: 1px solid $black--two;
+          cursor: pointer;
+
+          &:hover {
+            background-color: $black--two;
+            color: white;
+          }
+        }
+      }
+    }
+  }
+
+  .myaccount-table {
+    font-size: 14px;
+
+    white-space: nowrap;
+
+    .reset-whitespace {
+      white-space: initial;
+    }
+    table,
+    .table {
+      th {
+        font-weight: 600;
+        padding: 10px;
+        color: $black--two;
+        border-color: $grey--eleven;
+        border-bottom: 0;
+        background-color: $grey--four;
+
+        @include respond(extra-small-mobile) {
+          font-size: 14px;
+          padding: 8px;
+        }
+      }
+
+      td {
+        padding: 10px;
+        vertical-align: middle;
+        border-color: $grey--eleven;
+        max-width: 400px;
+
+        @include respond(extra-small-mobile) {
+          font-size: 13px;
+          padding: 8px;
+        }
+      }
+    }
+  }
+
+  .saved-message {
+    font-size: 14px;
+
+    padding: 20px 0;
+
+    color: $black--two;
+    border-top: 3px solid $black--two;
+    background-color: $white;
+  }
+  .view_profile_btn {
+    color: $blue--one;
+    cursor: pointer;
+    user-select: none;
+  }
+}
+
+/*=====  End of my account  ======*/
