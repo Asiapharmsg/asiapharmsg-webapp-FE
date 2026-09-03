@@ -35,3 +35,8 @@ out
 *.zip
 
 .vscode
+
+# env files with real values (build-time secrets for docker compose)
+.env
+.env.production
+.env.development

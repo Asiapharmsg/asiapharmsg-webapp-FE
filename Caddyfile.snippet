@@ -1,11 +1,17 @@
-# Add this block to the shared Caddyfile that already proxies
-# api.asiapharmsg.com (in the cust-admin-BE repo's caddy/Caddyfile).
-# Only one Caddy instance can hold host ports 80/443 on the VM, so both
-# domains must be served from that same instance/compose project.
+# Site blocks for the host's Caddy (/etc/caddy/Caddyfile on the EC2 box).
+# Caddy runs natively on the server, not in Docker, and already serves
+# db.asiapharmsg.com. Add these blocks alongside it, then:
+#   sudo systemctl reload caddy
 #
-# "frontend" here is this repo's docker-compose service name — it resolves
-# because this container joins the same ap_net Docker network as Caddy.
+# The frontend container publishes port 3000 on 127.0.0.1 only.
 
 asiapharmsg.com, www.asiapharmsg.com {
-    reverse_proxy frontend:3000
+    reverse_proxy 127.0.0.1:3000
+    encode gzip
 }
+
+# Optional staging hostname pointing at the same container (or a second one
+# on another port) while testing before cut-over.
+# staging.asiapharmsg.com {
+#     reverse_proxy 127.0.0.1:3000
+# }

@@ -1,21 +1,26 @@
-version: "3.7"
-
 services:
   frontend:
-    build: .
+    build:
+      context: .
+      # Build-time values: Next.js bakes these into the bundle. Put them in a
+      # `.env` file next to this compose file; compose substitutes them here.
+      args:
+        PUBLIC_URL: ${PUBLIC_URL:-}
+        API_URL: ${API_URL:?set API_URL in .env, e.g. https://api.asiapharmsg.com}
+        CAPTCHA_KEY: ${CAPTCHA_KEY:?set CAPTCHA_KEY (reCAPTCHA v2 site key) in .env}
+        EMAILJS_SERVICE_ID: ${EMAILJS_SERVICE_ID:-}
+        EMAILJS_TEMPLATE_ID: ${EMAILJS_TEMPLATE_ID:-}
+        EMAILJS_PUBLIC_KEY: ${EMAILJS_PUBLIC_KEY:-}
     image: ap-frontend:latest
     restart: unless-stopped
     environment:
       PORT: 3000
-    expose:
-      - "3000"
-    networks:
-      - ap_net
-
-# Shared with the backend stack so the Caddy container there can reach this
-# service by name. Must already exist on the VM (created by whichever compose
-# project starts first) — create it manually first if neither has yet:
-#   docker network create ap_net
-networks:
-  ap_net:
-    external: true
+    # Bound to localhost only; the host's Caddy reverse-proxies
+    # asiapharmsg.com to 127.0.0.1:3000 (see Caddyfile.snippet).
+    ports:
+      - "127.0.0.1:3000:3000"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
