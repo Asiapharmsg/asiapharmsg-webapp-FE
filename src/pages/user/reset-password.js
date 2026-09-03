@@ -11,7 +11,6 @@ import Link from "next/link";
 import Loader from "../../components/Loader";
 import Swal from "sweetalert2";
 import axios from "axios";
-import ReCAPTCHA from "react-google-recaptcha";
 
 const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
@@ -26,10 +25,8 @@ const Reset = () => {
     username: "",
     password: "",
   });
-  const [captchaValue, setCaptchaValue] = useState(null);
   const [loading, setLoading] = useState(false);
   const { addToast } = useToasts();
-  const recaptchaRef = createRef();
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -38,20 +35,13 @@ const Reset = () => {
     setCredentials({ ...credentials, [name]: value });
   };
 
-  const captchaHandler = (e) => {
-    console.log(e);
-    setCaptchaValue(e);
-  };
-
   const onSubmitHandler = (e) => {
     e.preventDefault();
     if (credentials.password == "") {
-      recaptchaRef.current?.reset();
       addToast("Please enter a password", { appearance: "error" });
       return;
     }
     if (credentials.password_confirm == "") {
-      recaptchaRef.current?.reset();
       addToast("Please enter a password confirm", { appearance: "error" });
       return;
     }
@@ -77,7 +67,6 @@ const Reset = () => {
               "An Admin will approve your account first.\nPlease try again later.",
               { appearance: "info" }
             );
-            recaptchaRef.current?.reset();
             setCredentials({ username: "", password: "" });
             return;
           } else if (resp.data.status === "Rejected") {
@@ -85,7 +74,6 @@ const Reset = () => {
               "Your account approval was reject. Please try creating an account again.",
               { appearance: "error" }
             );
-            recaptchaRef.current?.reset();
             setCredentials({ username: "", password: "" });
             return;
           } else {
@@ -100,7 +88,6 @@ const Reset = () => {
             );
             localStorage.setItem("token", resp.data.token);
             addToast("Login successful!", { appearance: "success", autoDismiss: true  });
-            recaptchaRef.current?.reset();
             setCredentials({ username: "", password: "" });
 
             setTimeout(() => {
@@ -113,7 +100,6 @@ const Reset = () => {
           }
         } else {
           setLoading(false);
-          recaptchaRef.current?.reset();
           addToast(`${resp.data.error ?? resp.data.errors[0]}`, {
             appearance: "error",
           });
@@ -122,7 +108,6 @@ const Reset = () => {
       .catch((err) => {
         console.log("Error: ", err.response);
         setLoading(false);
-        recaptchaRef.current?.reset();
         addToast(`${err.response.data.error ?? err.response.data.errors[0]}`, {
           appearance: "error",
         });

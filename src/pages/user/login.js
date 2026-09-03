@@ -11,7 +11,7 @@ import { useToasts } from 'react-toast-notifications';
 import Link from 'next/link';
 import Loader from '../../components/Loader';
 import axios from 'axios';
-import ReCAPTCHA from 'react-google-recaptcha';
+import { getCaptchaToken } from '../../utils/recaptcha';
 import withSingleAuth from '../../hoc/withSingleAuth';
 import { deleteAllFromCart } from '../../redux/actions/cartActions';
 
@@ -20,11 +20,9 @@ const Login = () => {
     username: '',
     password: ''
   });
-  const [captchaValue, setCaptchaValue] = useState(null);
   const [loading, setLoading] = useState(false);
   const { isAuthenticated } = useSelector((state) => state.user);
   const { addToast } = useToasts();
-  const recaptchaRef = useRef(null);
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -33,29 +31,26 @@ const Login = () => {
     setCredentials({ ...credentials, [name]: value });
   };
 
-  const captchaHandler = (e) => {
-    setCaptchaValue(e);
-  };
-
-  const onSubmitHandler = (e) => {
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
     if (credentials.username == '') {
-      recaptchaRef.current?.reset();
       addToast('Please enter a username', { appearance: 'error' });
       return;
     }
     if (credentials.password == '') {
-      recaptchaRef.current?.reset();
       addToast('Please enter a password', { appearance: 'error' });
       return;
     }
-    if (!captchaValue || captchaValue == '') {
-      addToast('Please solve the captcha first', { appearance: 'error' });
+    let captchaToken;
+    try {
+      captchaToken = await getCaptchaToken('login');
+    } catch (err) {
+      addToast('Security check could not load. Please refresh and try again.', { appearance: 'error' });
       return;
     }
     setLoading(true);
     axios
-      .post(`${process.env.API_URL}/user/login/${captchaValue}`, credentials, {
+      .post(`${process.env.API_URL}/user/login/${captchaToken}`, credentials, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -68,7 +63,6 @@ const Login = () => {
               'An Admin will approve your account first.\nPlease try again later.',
               { appearance: 'info' }
             );
-            recaptchaRef.current?.reset();
             setCredentials({ username: '', password: '' });
             return;
           } else if (resp.data.status === 'Rejected') {
@@ -76,7 +70,6 @@ const Login = () => {
               'Your account approval was rejected. Please try creating an account again.',
               { appearance: 'error' }
             );
-            recaptchaRef.current?.reset();
             setCredentials({ username: '', password: '' });
             return;
           } else {
@@ -96,7 +89,6 @@ const Login = () => {
               appearance: 'success',
               autoDismiss: true
             });
-            recaptchaRef.current?.reset();
             setCredentials({ username: '', password: '' });
             dispatch(deleteAllFromCart());
             setTimeout(() => {
@@ -113,7 +105,6 @@ const Login = () => {
           }
         } else {
           setLoading(false);
-          recaptchaRef.current?.reset();
           console.log('error here1');
           addToast(`${resp.data.error ?? resp.data.errors[0]}`, {
             appearance: 'error'
@@ -123,7 +114,6 @@ const Login = () => {
       .catch((err) => {
         console.log('Error: ', err.response);
         setLoading(false);
-        recaptchaRef.current?.reset();
         console.log('error here2');
         addToast(`${err.response.data.error ?? err.response.data.errors[0]}`, {
           appearance: 'error'
@@ -186,13 +176,6 @@ const Login = () => {
                         value={credentials.password}
                         placeholder="Password"
                         onChange={onChangeHandler}
-                      />
-                    </Col>
-                    <Col lg={12} className="space-mb--60">
-                      <ReCAPTCHA
-                        ref={recaptchaRef}
-                        sitekey={process.env.CAPTCHA_KEY}
-                        onChange={captchaHandler}
                       />
                     </Col>
                     <Col lg={12} className="space-mb--30 text-center">

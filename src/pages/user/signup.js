@@ -15,7 +15,7 @@ import {
 import { useRouter } from 'next/router';
 import { useToasts } from 'react-toast-notifications';
 import axios from 'axios';
-import ReCAPTCHA from 'react-google-recaptcha';
+import { getCaptchaToken } from '../../utils/recaptcha';
 import withSingleAuth from '../../hoc/withSingleAuth';
 
 const Signup = () => {
@@ -52,7 +52,6 @@ const Signup = () => {
   const [smc, setSMCCert] = useState({});
   const [acra, setAcra] = useState({});
   const [loading, setLoading] = useState(false);
-  const [captchaValue, setCaptchaValue] = useState(null);
   const [selectionValue, setSelectionValue] = useState(null);
   const [formFields, setFormFields] = useState([
     {
@@ -175,7 +174,6 @@ const Signup = () => {
     }
   ]);
   const router = useRouter();
-  const recaptchaRef = useRef(null);
   const { addToast } = useToasts();
 
   const validPasswordRegex =
@@ -239,11 +237,6 @@ const Signup = () => {
     // setFormFields(updatedFormFields);
   };
 
-  const captchaHandler = (e) => {
-    console.log(e);
-    setCaptchaValue(e);
-  };
-
   /* support multiple files 
   const mohChangeHandler = (e) => {
     if (e.target.files.length > 0) {
@@ -292,7 +285,7 @@ const Signup = () => {
     setSelectionValue(e.target.checked);
   };
 
-  const onSubmitHandler = (e) => {
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
     if (!moh.name) {
       addToast('Please upload MOH / Wholesale Licence!', {
@@ -365,10 +358,6 @@ const Signup = () => {
         return;
       }
     }
-    if (!captchaValue || captchaValue == '') {
-      addToast('Please solve the captcha first', { appearance: 'error' });
-      return;
-    }
 
     if (!selectionValue) {
       console.log('selection :', selectionValue);
@@ -401,20 +390,25 @@ const Signup = () => {
       ) {
         setLoading(false);
         addToast(`Please fill in ${key} field`, { appearance: 'error' });
-        recaptchaRef.current?.reset();
         return;
       } else {
         formData.append(key, fields[key]);
       }
     }
     console.log('Sign up data', formData.username);
+    let captchaToken;
+    try {
+      captchaToken = await getCaptchaToken('signup');
+    } catch (err) {
+      setLoading(false);
+      addToast('Security check could not load. Please refresh and try again.', { appearance: 'error' });
+      return;
+    }
     axios
-      .post(`${process.env.API_URL}/user/signup/${captchaValue}`, formData)
+      .post(`${process.env.API_URL}/user/signup/${captchaToken}`, formData)
       .then((resp) => {
         if (resp.status === 200) {
           setLoading(false);
-
-          recaptchaRef.current?.reset();
           addToast(
             'Registration successful.\nAn admin will approve your account shortly!',
             { appearance: 'success', autoDismiss: true }
@@ -448,8 +442,6 @@ const Signup = () => {
         } else {
           setLoading(false);
 
-          recaptchaRef.current?.reset();
-
           addToast(`${resp.data.error ?? resp.data.errors[0]}`, {
             appearance: 'error'
           });
@@ -463,7 +455,6 @@ const Signup = () => {
         //   text: `${err.response.data.error ?? err.response.data.errors[0]}`,
         //   timer: 1500,
         // });
-        recaptchaRef.current?.reset();
 
         addToast(`${err.response.data.error ?? err.response.data.errors[0]}`, {
           appearance: 'error'
@@ -668,13 +659,6 @@ const Signup = () => {
                           </a>
                         </b>
                       </label>
-                    </Col>
-                    <Col lg={12} className="space-mb--60">
-                      <ReCAPTCHA
-                        ref={recaptchaRef}
-                        sitekey={process.env.CAPTCHA_KEY}
-                        onChange={captchaHandler}
-                      />
                     </Col>
 
                     <Col lg={12} className="text-center space-mb--30">
