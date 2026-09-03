@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Modal, Button, Image, Carousel } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
-import { InputField } from '../../../components/Form';
+import { InputField } from '../Form';
 import { useToasts } from 'react-toast-notifications';
 import { useRouter } from 'next/router';
 import Select from 'react-select';

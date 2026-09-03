@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { useToasts } from "react-toast-notifications";
 import { Spinner } from "react-bootstrap";
-import Table from "../../../components/Table";
+import Table from "../Table";
 import Modal from "./pendingUsersModal";
 import moment from "moment";
 import axios from "axios";

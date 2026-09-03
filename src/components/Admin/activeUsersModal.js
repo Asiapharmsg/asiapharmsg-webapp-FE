@@ -8,7 +8,7 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import lodash from 'lodash';
 import moment from 'moment';
-import { InputField } from '../../../components/Form';
+import { InputField } from '../Form';
 import Swal from 'sweetalert2';
 import ImageAndPdfViewer from './imageAndPdfViewer';
 import dayjs from 'dayjs';
