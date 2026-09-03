@@ -61,8 +61,9 @@ const Forget = () => {
     }
     setLoading(true);
 
-    //configur url 
-    credentials.redirectUrl = "localhost:3000/user/resetpassword/";
+    // The backend emails a temporary password; redirectUrl is validated as
+    // required but only used by the (disabled) link-based reset flow.
+    credentials.redirectUrl = `${window.location.origin}/user/login/`;
 
     axios
       .post(`${process.env.API_URL}/user/forgetpassword`, credentials, {
@@ -73,17 +74,16 @@ const Forget = () => {
       .then((resp) => {
         if (resp.status === 200) {
           setLoading(false);
-          localStorage.setItem("token", resp.data.token);
           swalWithBootstrapButtons.fire({
             icon: "success",
-            title: "Success",
-            text: `${resp.data.message}`,
-            timer: 1500,
+            title: "Check your email",
+            text: "A temporary password has been sent to your email. Use it to log in, then change it under My Account.",
+            timer: 4000,
             showConfirmButton: false,
           });
           setTimeout(() => {
-            router.push("/");
-          }, 1500);
+            router.push("/user/login");
+          }, 4000);
           setCredentials({ username: ""});
         } else {
           setLoading(false);

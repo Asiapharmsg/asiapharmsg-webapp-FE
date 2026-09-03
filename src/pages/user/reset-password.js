@@ -57,9 +57,11 @@ const Reset = () => {
     }
     setLoading(true);
 
-    //configure credientials
-    credentials.userid = 3;
-    credentials.resetString = "localhost:3000/user/resetpassword/";
+    // The reset link (when the backend's link-based flow is enabled) carries
+    // the user id and reset token as query params: /user/reset-password/?userid=..&token=..
+    credentials.userid = router.query.userid;
+    credentials.resetString = router.query.token;
+    credentials.newPassword = credentials.password;
 
     axios
       .post(`${process.env.API_URL}/user/resetpassword`, credentials, {
@@ -88,7 +90,13 @@ const Reset = () => {
             return;
           } else {
             dispatch(
-              login(resp.data.username, resp.data.token, resp.data.isAdmin)
+              login({
+                userId: resp.data.userId,
+                username: resp.data.username,
+                token: resp.data.token,
+                isAdmin: resp.data.isAdmin,
+                accountType: resp.data.accountType,
+              })
             );
             localStorage.setItem("token", resp.data.token);
             addToast("Login successful!", { appearance: "success", autoDismiss: true  });
