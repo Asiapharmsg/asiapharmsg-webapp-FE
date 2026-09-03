@@ -1,5 +1,16 @@
 //export const BASE_URL = 'https://api.asiapharmsg.com/';
 export const BASE_URL = process.env.API_URL;
+
+// fetch() with the login token attached. All /api calls go through this so
+// the backend can require authentication on them.
+export const apiFetch = (url, options = {}) => {
+  const headers = new Headers(options.headers || {});
+  if (typeof window !== 'undefined' && !headers.has('Authorization')) {
+    const token = localStorage.getItem('token');
+    if (token) headers.set('Authorization', `Bearer ${token}`);
+  }
+  return fetch(url, { ...options, headers });
+};
 //export const SUPPLIER_ID = 8;
 //export const USER_ID = 7;
 

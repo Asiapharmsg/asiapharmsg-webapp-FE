@@ -1,5 +1,5 @@
 import { useQueryClient, useMutation } from 'react-query';
-import { BASE_URL } from '../../utils';
+import { BASE_URL, apiFetch } from '../../utils';
 import { useToasts } from 'react-toast-notifications';
 
 export default function useAddProduct() {
@@ -8,7 +8,7 @@ export default function useAddProduct() {
 
   const addProduct = async (product) => {
     console.log("useAddProduct - API CALL",product);
-    const res = await fetch(`${BASE_URL}/api/products`, {
+    const res = await apiFetch(`${BASE_URL}/api/products`, {
       method: 'POST',
       body: product,
     });

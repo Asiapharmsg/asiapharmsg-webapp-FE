@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { BASE_URL } from '../../utils';
+import { BASE_URL, apiFetch } from '../../utils';
 
 export default function useFetchAllBillings() {
   return useQuery(['billings'], () => fetchAllBillings());
@@ -7,7 +7,7 @@ export default function useFetchAllBillings() {
 
 const fetchAllBillings = async (supplierId) => {
   try {
-    const response = await fetch(`${BASE_URL}/api/billings/`);
+    const response = await apiFetch(`${BASE_URL}/api/billings/`);
     const data = await response.json();
     return data;
   } catch (error) {

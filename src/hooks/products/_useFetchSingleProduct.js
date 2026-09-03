@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { BASE_URL } from '../../utils';
+import { BASE_URL, apiFetch } from '../../utils';
 
 export default function useFetchSingleProduct({ productId }) {
   return useQuery(
@@ -12,7 +12,7 @@ export default function useFetchSingleProduct({ productId }) {
 }
 
 const fetchSingleProduct = async (productId) => {
-  const response = await fetch(`${BASE_URL}/api/products/single/${productId}`);
+  const response = await apiFetch(`${BASE_URL}/api/products/single/${productId}`);
   const data = await response.json();
   return data ? data : null;
 };

@@ -1,5 +1,5 @@
 import { useQueryClient, useMutation } from 'react-query';
-import { BASE_URL } from '../../utils';
+import { BASE_URL, apiFetch } from '../../utils';
 import { useToasts } from 'react-toast-notifications';
 
 const useDeleteProduct = () => {
@@ -7,7 +7,7 @@ const useDeleteProduct = () => {
   const { addToast } = useToasts();
 
   const deleteProduct = async (pid) => {
-    const res = await fetch(`${BASE_URL}/api/products/${pid}`, {
+    const res = await apiFetch(`${BASE_URL}/api/products/${pid}`, {
       method: 'DELETE',
     });
     const data = await res?.json();

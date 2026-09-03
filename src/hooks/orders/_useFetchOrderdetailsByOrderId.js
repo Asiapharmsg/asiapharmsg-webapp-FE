@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { BASE_URL } from '../../utils';
+import { BASE_URL, apiFetch } from '../../utils';
 
 export default function useFetchOrderdetailsByOrderId(orderId) {
   return useQuery(
@@ -13,7 +13,7 @@ export default function useFetchOrderdetailsByOrderId(orderId) {
 
 const fetchOrdersByOrderId = async (oid) => {
   try {
-    const response = await fetch(`${BASE_URL}/api/orderdetails/order/${oid}`);
+    const response = await apiFetch(`${BASE_URL}/api/orderdetails/order/${oid}`);
     const data = await response.json();
     //console.log("order details data : ", data);
     return data;

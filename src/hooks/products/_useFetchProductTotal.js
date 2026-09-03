@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { BASE_URL } from '../../utils';
+import { BASE_URL, apiFetch } from '../../utils';
 import moment from 'moment';
 
 export default function useFetchProductTotal(options) {
@@ -22,29 +22,29 @@ const fetchProduct = async (searchText, categoryId, supplierId, curPage, perPage
   if (supplierId) {
     //fecth products by supplier
     if (!searchText && !categoryId) {
-      const response = await fetch(
+      const response = await apiFetch(
         `${BASE_URL}/api/products?supplier_id=${supplierId}&page=${curPage}&page_size=${perPage}`
       );
       data = await response.json();
     } else if (searchText && !categoryId) {
-      const response = await fetch(
+      const response = await apiFetch(
         `${BASE_URL}/api/products?searchText=${searchText}&supplier_id=${supplierId}&page=${curPage}&page_size=${perPage}`
       );
       data = await response.json();
     } else if (!searchText && categoryId) {
-      const response = await fetch(
+      const response = await apiFetch(
         `${BASE_URL}/api/products?category_id=${categoryId}&supplier_id=${supplierId}&page=${curPage}&page_size=${perPage}`
       );
       data = await response.json();
     } else if (searchText && categoryId) {
-      const response = await fetch(
+      const response = await apiFetch(
         `${BASE_URL}/api/products?searchText=${searchText}&category_id=${categoryId}&supplier_id=${supplierId}&page=${curPage}&page_size=${perPage}`
       );
       data = await response.json();
     }
   } else {
     if (!searchText && !categoryId) {
-      const response = await fetch(`${BASE_URL}/api/products?page=${curPage}&page_size=${perPage}`);
+      const response = await apiFetch(`${BASE_URL}/api/products?page=${curPage}&page_size=${perPage}`);
       data = await response.json();
       // console.log(data);
       // let results = [];
@@ -59,17 +59,17 @@ const fetchProduct = async (searchText, categoryId, supplierId, curPage, perPage
       // }
       // return results;
     } else if (searchText && !categoryId) {
-      const response = await fetch(
+      const response = await apiFetch(
         `${BASE_URL}/api/products?searchText=${searchText}&page=${curPage}&page_size=${perPage}`
       );
       data = await response.json();
     } else if (!searchText && categoryId) {
-      const response = await fetch(
+      const response = await apiFetch(
         `${BASE_URL}/api/products?category_id=${categoryId}`
       );
       data = await response.json();
     } else if (searchText && categoryId) {
-      const response = await fetch(
+      const response = await apiFetch(
         `${BASE_URL}/api/products?searchText=${searchText}&category_id=${categoryId}`
       );
       data = await response.json();

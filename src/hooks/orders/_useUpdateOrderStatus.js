@@ -1,5 +1,5 @@
 import { useQueryClient, useMutation } from 'react-query';
-import { BASE_URL } from '../../utils';
+import { BASE_URL, apiFetch } from '../../utils';
 import { useToasts } from 'react-toast-notifications';
 
 
@@ -17,7 +17,7 @@ export default function useUpdateOrderStatus() {
         total_price
     };
     try {
-      const res = await fetch(`${BASE_URL}/api/orders/${oid}`, {
+      const res = await apiFetch(`${BASE_URL}/api/orders/${oid}`, {
         method: 'PATCH',
         body: JSON.stringify(payload),
         headers: {
@@ -57,7 +57,7 @@ export default function useUpdateOrderDetailStatus() {
         }
         console.log("update order details status :", o.id);
         orderDetailCalls.push(
-          fetch(`${BASE_URL}/api/orderdetails/${o.id}`, {
+          apiFetch(`${BASE_URL}/api/orderdetails/${o.id}`, {
             method: 'PATCH',
             body: JSON.stringify(payload),
             headers: {

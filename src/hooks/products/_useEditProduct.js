@@ -1,5 +1,5 @@
 import { useQueryClient, useMutation } from 'react-query';
-import { BASE_URL } from '../../utils';
+import { BASE_URL, apiFetch } from '../../utils';
 import { useToasts } from 'react-toast-notifications';
 
 export default function useEditProduct() {
@@ -7,7 +7,7 @@ export default function useEditProduct() {
   const { addToast } = useToasts();
 
   const editProduct = async ({ productId, newProduct }) => {
-    const res = await fetch(`${BASE_URL}/api/products/${productId}`, {
+    const res = await apiFetch(`${BASE_URL}/api/products/${productId}`, {
       method: 'PATCH',
       body: newProduct,
     });
