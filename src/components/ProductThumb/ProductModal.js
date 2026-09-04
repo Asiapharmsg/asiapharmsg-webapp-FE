@@ -6,6 +6,7 @@ import CustomScroll from "react-custom-scroll";
 import { getProductCartQuantity } from "../../lib/product";
 import { ProductRating } from "../Product";
 import { getStockCount } from '../../utils';
+import ProductImage from '../ProductImage';
 
 
 const ProductModal = (props) => {
@@ -66,8 +67,8 @@ const ProductModal = (props) => {
                 return (
                   <div key={key}>
                     <div className="single-image">
-                      <img
-                        src={process.env.PUBLIC_URL + single}
+                      <ProductImage
+                        src={single}
                         className="img-fluid"
                         alt=""
                       />

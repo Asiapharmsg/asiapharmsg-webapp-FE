@@ -6,6 +6,7 @@ import { Tooltip } from 'react-tippy';
 import ProductModal from './ProductModal';
 import { getStockCount, getProductStatus } from '../../utils';
 import dayjs from 'dayjs';
+import ProductImage from '../ProductImage';
 
 const ProductGridList = ({
   product,
@@ -36,7 +37,7 @@ const ProductGridList = ({
               as={process.env.PUBLIC_URL + '/shop/product-basic/' + product?.id}
             >
               <a className="image-wrap">
-                <img
+                <ProductImage
                   src={product?.image}
                   className="img-fluid"
                   alt={product?.name}
@@ -185,7 +186,7 @@ const ProductGridList = ({
               as={process.env.PUBLIC_URL + '/shop/product-basic/' + product?.id}
             >
               <a className="image-wrap">
-                <img
+                <ProductImage
                   src={product?.image}
                   className="img-fluid"
                   alt={product?.name}

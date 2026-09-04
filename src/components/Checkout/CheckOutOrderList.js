@@ -12,6 +12,7 @@ import {
 } from '../../redux/actions/cartActions';
 import { useToasts } from 'react-toast-notifications';
 import React from 'react';
+import ProductImage from '../ProductImage';
 const CheckOutOrderList = ({
   cartItems,
   deleteFromCart,
@@ -47,8 +48,8 @@ const CheckOutOrderList = ({
                             as={`${process.env.PUBLIC_URL}/shop/product-basic/${product?.id}`}
                           >
                             <a>
-                              <img
-                                src={process.env.PUBLIC_URL + product.image}
+                              <ProductImage
+                                src={product.image}
                                 className="img-fluid"
                                 alt=""
                               />

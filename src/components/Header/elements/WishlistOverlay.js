@@ -8,6 +8,7 @@ import { getProductCartQuantity } from '../../../lib/product';
 import { deleteFromWishlist } from '../../../redux/actions/wishlistActions';
 import { getStockCount } from '../../../utils';
 import { addToCart } from '../../../redux/actions/cartActions';
+import ProductImage from '../../ProductImage';
 
 const WishlistOverlay = ({
   activeStatus,
@@ -94,8 +95,8 @@ const WishlistOverlay = ({
                             as={`${process.env.PUBLIC_URL}/shop/product-basic/${product.id}`}
                           >
                             <a>
-                              <img
-                                src={process.env.PUBLIC_URL + product.image}
+                              <ProductImage
+                                src={product.image}
                                 className="img-fluid"
                                 alt=""
                               />

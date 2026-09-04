@@ -5,6 +5,7 @@ import {
 import dayjs from 'dayjs';
 import { getOrderStatus } from '../../utils';
 import { IoMdEye } from 'react-icons/io';
+import ProductImage from '../ProductImage';
 
 export default function PendingList() {
   const { data: products, status} = useFetchPendingProducts();
@@ -36,7 +37,14 @@ export default function PendingList() {
                       <td>{p?.name}</td>
                       <td>{dayjs(products?.createdAt).format('MMM D, YYYY')}</td>
                       <td>{p?.status}</td>
-                      <td>${p?.image}</td>
+                      <td>
+                        <ProductImage
+                          src={p?.image}
+                          alt={p?.name}
+                          className="img-fluid"
+                          style={{ maxWidth: '60px' }}
+                        />
+                      </td>
                     </tr>
                   ))}
               </tbody>

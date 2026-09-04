@@ -10,6 +10,7 @@ import { Tooltip } from "react-tippy";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
+import ProductImage from '../ProductImage';
 
 const ImageGalleryBottomThumb = ({
   product,
@@ -95,9 +96,7 @@ const ImageGalleryBottomThumb = ({
         </div>
         
         <div className="viewProductImg">
-          {
-            viewImg && <img alt='' src={viewImg} />
-          }
+          <ProductImage alt={product?.name || ''} src={viewImg} className="" />
         </div>
       </div>
 
@@ -110,7 +109,7 @@ const ImageGalleryBottomThumb = ({
                   // onClick={() => handleSelectImg(image, i)}
                   >
                     <div className="single-image">
-                      <img src={image} className="img-fluid" alt="" />
+                      <ProductImage src={image} className="img-fluid" alt="" />
                     </div>
                   </div>
                 );

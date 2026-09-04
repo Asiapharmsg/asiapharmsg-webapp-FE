@@ -8,6 +8,7 @@ import { deleteFromCart } from '../../../redux/actions/cartActions';
 import { useAddOrder } from '../../../hooks/orders';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
+import ProductImage from '../../ProductImage';
 
 const CartOverlay = ({
   activeStatus,
@@ -107,8 +108,8 @@ const CartOverlay = ({
                             as={`${process.env.PUBLIC_URL}/shop/product-basic/${product?.id}`}
                           >
                             <a>
-                              <img
-                                src={process.env.PUBLIC_URL + product.image}
+                              <ProductImage
+                                src={product.image}
                                 className="img-fluid"
                                 alt=""
                               />
