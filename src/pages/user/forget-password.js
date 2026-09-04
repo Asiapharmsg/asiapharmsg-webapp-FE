@@ -101,7 +101,7 @@ const Forget = () => {
         swalWithBootstrapButtons.fire({
           icon: "error",
           title: "Error",
-          text: `${err.response.data.error ?? err.response.data.errors[0]}`,
+          text: `${err.response?.data?.error ?? err.response?.data?.errors?.[0] ?? err.message}`,
           timer: 1500,
         });
       });

@@ -12,7 +12,10 @@ export default function useEditProduct() {
       body: newProduct,
     });
     const data = await res?.json();
-    // console.log('updated data', data);
+    if (data?.success === false || data?.error) {
+      throw new Error(data.message || data.error || 'Request failed');
+    }
+    return data;
   };
   return useMutation(editProduct, {
     onSuccess: async (res, variables, context) => {
@@ -20,7 +23,7 @@ export default function useEditProduct() {
       queryClient.refetchQueries(['products']);
     },
     onError: (err, variables, context) => {
-      addToast('Error saving edited product', { appearance: 'error' });
+      addToast(err?.message || 'Error saving edited product', { appearance: 'error' });
     },
   });
 }

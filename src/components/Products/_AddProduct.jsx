@@ -114,9 +114,16 @@ export default function _AddProduct({ onFinishAdding }) {
       formData.append('expiry_date', expiryDate);
       formData.append('inventory_count', inventoryCount);
       formData.append('status', 1); //Hardcode 
-      formData.append('images', image);
-      formData.append('images', sub_image1);
-      formData.append('images', sub_image2);
+      // Only chosen files are sent, each tagged with the column it fills,
+      // so choosing only a secondary image never replaces the primary one.
+      [['image', image], ['sub_image1', sub_image1], ['sub_image2', sub_image2]].forEach(
+        ([slot, file]) => {
+          if (file) {
+            formData.append('image_slots', slot);
+            formData.append('images', file);
+          }
+        }
+      );
 
       console.log("data in add project jsx", formData);
       addProductQuery(formData);

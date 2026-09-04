@@ -210,6 +210,7 @@ export default function OrdersList() {
       return data;
     } catch (error) {
       console.log(error);
+      setUserInfo({ unavailable: true });
       return [];
     }
   };
@@ -504,7 +505,13 @@ export default function OrdersList() {
               <tbody>
                 <tr>
                   <td>Name :</td>
-                  <td>{userInfo.firstName + ' ' + userInfo.lastName}</td>
+                  <td>
+                    {userInfo?.unavailable
+                      ? 'Not available'
+                      : [userInfo?.firstName, userInfo?.lastName]
+                          .filter(Boolean)
+                          .join(' ')}
+                  </td>
                 </tr>
                 <tr>
                   <td>Account Type :</td>
@@ -715,12 +722,32 @@ export default function OrdersList() {
                   }
                   className="lezada-button lezada-button--small product-content__ofs space-mr--10"
                   onClick={() => {
-                    updateOrderDetailsStatus({
-                      orderDetails: selectedOrder?.orderdetails,
-                      clientEmail: userInfo.email
-                    });
-
-                    setTimeout(() => window.location.reload(), 1000);
+                    // Only lines whose status or remarks changed. Lines that
+                    // are already approved must not be re-sent: each approval
+                    // is billed.
+                    const changed = (selectedOrder?.orderdetails || []).filter(
+                      (o) => {
+                        const og = ogSelectedOrder?.orderdetails?.find(
+                          (x) => x.id === o.id
+                        );
+                        return (
+                          !og ||
+                          og.status != o.status ||
+                          (og.remarks ?? '') != (o.remarks ?? '')
+                        );
+                      }
+                    );
+                    if (changed.length === 0) return;
+                    updateOrderDetailsStatus(
+                      {
+                        orderDetails: changed,
+                        clientEmail: userInfo?.email
+                      },
+                      {
+                        onSuccess: () =>
+                          setTimeout(() => window.location.reload(), 800)
+                      }
+                    );
                   }}
                 >
                   Save changes

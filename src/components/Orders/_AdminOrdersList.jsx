@@ -153,6 +153,7 @@ export default function AdminOrdersList() {
       return data;
     } catch (error) {
       console.log(error);
+      setUserInfo({ unavailable: true });
       return [];
     }
   };
@@ -353,7 +354,13 @@ export default function AdminOrdersList() {
               <tbody>
                 <tr>
                   <td>Name : </td>
-                  <td>{userInfo.firstName + ' ' + userInfo.lastName}</td>
+                  <td>
+                    {userInfo?.unavailable
+                      ? 'Not available'
+                      : [userInfo?.firstName, userInfo?.lastName]
+                          .filter(Boolean)
+                          .join(' ')}
+                  </td>
                 </tr>
                 <tr>
                   <td>Account Type : </td>

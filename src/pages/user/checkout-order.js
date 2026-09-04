@@ -9,6 +9,7 @@ import React from 'react';
 import { useAddOrder } from '../../hooks/orders';
 import { deleteAllFromCart } from '../../redux/actions/cartActions';
 import { buildDeliveryAddress } from '../../utils';
+import withAuth from '../../hoc/withAuth';
 
 const checkOutOrder = ({ cartItems, deleteAllFromCart }) => {
   const { mutate: createOrder, isLoading: isSubmitting } = useAddOrder();
@@ -105,4 +106,6 @@ const mapDispatchToProps = (dispatch) => {
     }
   };
 };
-export default connect(mapStateToProps, mapDispatchToProps)(checkOutOrder);
+export default withAuth(
+  connect(mapStateToProps, mapDispatchToProps)(checkOutOrder)
+);

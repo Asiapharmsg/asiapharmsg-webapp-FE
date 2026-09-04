@@ -108,7 +108,7 @@ const Reset = () => {
       .catch((err) => {
         console.log("Error: ", err.response);
         setLoading(false);
-        addToast(`${err.response.data.error ?? err.response.data.errors[0]}`, {
+        addToast(`${err.response?.data?.error ?? err.response?.data?.errors?.[0] ?? err.message}`, {
           appearance: "error",
         });
       });

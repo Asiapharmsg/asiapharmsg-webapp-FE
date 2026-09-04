@@ -2,14 +2,32 @@
 export const BASE_URL = process.env.API_URL;
 
 // fetch() with the login token attached. All /api calls go through this so
-// the backend can require authentication on them.
-export const apiFetch = (url, options = {}) => {
+// the backend can require authentication on them. A 401 means the token is
+// missing or expired (they last two hours): the stale session is dropped and
+// the user is sent to the login page. Any other failure throws an Error whose
+// message is the backend's, so callers and react-query see it as an error
+// instead of an object where a list was expected.
+export const apiFetch = async (url, options = {}) => {
   const headers = new Headers(options.headers || {});
   if (typeof window !== 'undefined' && !headers.has('Authorization')) {
     const token = localStorage.getItem('token');
     if (token) headers.set('Authorization', `Bearer ${token}`);
   }
-  return fetch(url, { ...options, headers });
+  const res = await fetch(url, { ...options, headers });
+  if (res.status === 401 && typeof window !== 'undefined') {
+    localStorage.clear();
+    window.location.assign(`${process.env.PUBLIC_URL || ''}/user/login`);
+  }
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    const err = new Error(
+      body?.error ?? body?.errors?.[0] ?? `Request failed (${res.status})`
+    );
+    err.status = res.status;
+    err.body = body;
+    throw err;
+  }
+  return res;
 };
 
 // Address printed on an order. Delivery type 2 means "use the separate

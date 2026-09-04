@@ -80,7 +80,7 @@ const ChangePassword = () => {
         });
       }
     } catch (err) {
-      addToast(`${err.response.data.error ?? err.response.data.errors[0]}`, {
+      addToast(`${err.response?.data?.error ?? err.response?.data?.errors?.[0] ?? err.message}`, {
         appearance: "error",
       });
     }

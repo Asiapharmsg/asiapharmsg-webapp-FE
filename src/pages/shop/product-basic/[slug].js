@@ -23,6 +23,7 @@ import {
 } from "../../../redux/actions/compareActions";
 import products from "../../../data/products.json";
 import {  useFetchSingleProduct } from '../../../hooks/products';
+import withAuth from '../../../hoc/withAuth';
 
 const ProductBasic = ({
   cartItems,
@@ -194,5 +195,7 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProductBasic);
+// The product API needs a login, so the page asks for one instead of
+// rendering an empty product.
+export default withAuth(connect(mapStateToProps, mapDispatchToProps)(ProductBasic));
 

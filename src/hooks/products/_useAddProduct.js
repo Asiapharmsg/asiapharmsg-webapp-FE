@@ -13,7 +13,10 @@ export default function useAddProduct() {
       body: product,
     });
     const data = await res?.json();
-    // console.log('data', data);
+    if (data?.success === false || data?.error) {
+      throw new Error(data.message || data.error || 'Request failed');
+    }
+    return data;
   };
   return useMutation(addProduct, {
     onSuccess: async (res, variables, context) => {
@@ -21,7 +24,7 @@ export default function useAddProduct() {
       queryClient.refetchQueries('products');
     },
     onError: (err, variables, context) => {
-        addToast("Error adding product", { appearance: 'error' });
+        addToast(err?.message || "Error adding product", { appearance: 'error' });
     }
   });
 }

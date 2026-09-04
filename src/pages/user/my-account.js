@@ -256,7 +256,7 @@ const MyAccount = () => {
   }, []);
 
   useEffect(() => {
-    if (allProducts?.length > 0) {
+    if (Array.isArray(allProducts)) {
       setProducts(allProducts);
     }
   }, [allProducts]);

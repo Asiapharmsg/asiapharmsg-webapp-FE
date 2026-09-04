@@ -115,7 +115,7 @@ const Login = () => {
         console.log('Error: ', err.response);
         setLoading(false);
         console.log('error here2');
-        addToast(`${err.response.data.error ?? err.response.data.errors[0]}`, {
+        addToast(`${err.response?.data?.error ?? err.response?.data?.errors?.[0] ?? err.message}`, {
           appearance: 'error'
         });
       });

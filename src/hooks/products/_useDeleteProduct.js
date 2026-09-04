@@ -11,6 +11,10 @@ const useDeleteProduct = () => {
       method: 'DELETE',
     });
     const data = await res?.json();
+    if (data?.success === false || data?.error) {
+      throw new Error(data.message || data.error || 'Request failed');
+    }
+    return data;
   };
 
   return useMutation(deleteProduct, {
@@ -19,7 +23,7 @@ const useDeleteProduct = () => {
       queryClient.refetchQueries('products');
     },
     onError: (err, variables, context) => {
-      addToast('Error deleting product', { appearance: 'error' });
+      addToast(err?.message || 'Error deleting product', { appearance: 'error' });
     },
   });
 };
