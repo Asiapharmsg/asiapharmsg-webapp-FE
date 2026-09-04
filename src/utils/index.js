@@ -11,6 +11,19 @@ export const apiFetch = (url, options = {}) => {
   }
   return fetch(url, { ...options, headers });
 };
+
+// Address printed on an order. Delivery type 2 means "use the separate
+// delivery address"; accounts without one fall back to the company address.
+export const buildDeliveryAddress = (userData, deliveryType) => {
+  const hasDeliveryAddress =
+    userData?.deliveryAddress && String(userData.deliveryAddress).trim() !== '';
+  const useDelivery = String(deliveryType) === '2' && hasDeliveryAddress;
+  const address = useDelivery
+    ? userData.deliveryAddress
+    : userData?.companyAddress;
+  const postal = useDelivery ? userData.deliveryPostal : userData?.companyPostal;
+  return `${address ?? ''} Singapore ${postal ?? ''}`.trim();
+};
 //export const SUPPLIER_ID = 8;
 //export const USER_ID = 7;
 

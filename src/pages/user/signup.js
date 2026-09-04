@@ -442,9 +442,10 @@ const Signup = () => {
         } else {
           setLoading(false);
 
-          addToast(`${resp.data.error ?? resp.data.errors[0]}`, {
-            appearance: 'error'
-          });
+          addToast(
+            resp.data?.error ?? resp.data?.errors?.[0] ?? 'Registration failed',
+            { appearance: 'error' }
+          );
         }
       })
       .catch((err) => {
@@ -456,9 +457,12 @@ const Signup = () => {
         //   timer: 1500,
         // });
 
-        addToast(`${err.response.data.error ?? err.response.data.errors[0]}`, {
-          appearance: 'error'
-        });
+        addToast(
+          err.response?.data?.error ??
+            err.response?.data?.errors?.[0] ??
+            'Registration failed, please try again',
+          { appearance: 'error' }
+        );
       });
   };
 

@@ -136,6 +136,9 @@ const MyAccount = () => {
         file != null && formData.append('image_moh', file, file.name);
 
         for (const key in data) {
+          // FormData turns null into the string "null"; leave empty optional
+          // fields out so the backend keeps them NULL.
+          if (data[key] === null || data[key] === undefined) continue;
           formData.append(key, data[key]);
         }
         const resp = await axios.put(

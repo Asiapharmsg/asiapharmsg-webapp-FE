@@ -3,16 +3,15 @@ import { FaCheck } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/router';
 import { useToasts } from 'react-toast-notifications';
+import { buildDeliveryAddress } from '../../utils';
 
 const UserDetail = (props) => {
-  let { cartItems, confirmUserAndDeliveryOrder } = props;
+  let { cartItems, confirmUserAndDeliveryOrder, isSubmitting } = props;
   let [userData, setUserData] = useState(null);
   const user = useSelector((state) => state.user);
   const [deliveryType, setDeliveryType] = useState(1);
-  const [deliveryAddress, setDeliveryAddress] = useState(1);
-  const router = useRouter();
+  const [deliveryAddress, setDeliveryAddress] = useState('');
   const { addToast } = useToasts();
   const fetchData = async () => {
     try {
@@ -26,11 +25,7 @@ const UserDetail = (props) => {
       );
       const data = resp.data;
       data.data.deliveryType = deliveryType;
-
-      const full_addr =
-        data.data.companyAddress + ' Singapore ' + data.data.companyPostal;
-      setDeliveryAddress(full_addr);
-
+      setDeliveryAddress(buildDeliveryAddress(data.data, deliveryType));
       setUserData(data.data);
     } catch (err) {
       setUserData(null);
@@ -42,7 +37,12 @@ const UserDetail = (props) => {
   }, []);
 
   const confirm = () => {
-    if (!userData.firstName?.trim()) {
+    if (!cartItems || cartItems.length === 0) {
+      addToast('Your cart is empty', {
+        appearance: 'error',
+        autoDismiss: true
+      });
+    } else if (!userData.firstName?.trim()) {
       addToast('Please enter your first name', {
         appearance: 'error',
         autoDismiss: true
@@ -63,8 +63,8 @@ const UserDetail = (props) => {
         autoDismiss: true
       });
     } else {
+      // The checkout page navigates away once the order is saved.
       confirmUserAndDeliveryOrder(userData);
-      router.push('/shop/left-sidebar');
     }
   };
   const changeDeliveryUserDetail = (e, fieldName) => {
@@ -75,16 +75,7 @@ const UserDetail = (props) => {
     }
 
     if (fieldName == 'deliveryType') {
-      //set delivery address
-      if (e.target.value == 1) {
-        const full_addr =
-          userData.companyAddress + ' Singapore ' + userData.companyPostal;
-        setDeliveryAddress(full_addr);
-      } else {
-        const full_addr =
-          userData.deliveryAddress + ' Singapore ' + userData.deliveryPostal;
-        setDeliveryAddress(full_addr);
-      }
+      setDeliveryAddress(buildDeliveryAddress(userData, e.target.value));
     }
     setUserData({ ...userData, ...updatedProperty });
   };
@@ -251,9 +242,9 @@ const UserDetail = (props) => {
                 <button
                   className="lezada-button lezada-button--medium product-content__cart space-mr--10"
                   onClick={confirm}
-                  disabled={!userData || !cartItems}
+                  disabled={!userData || !cartItems || isSubmitting}
                 >
-                  Save And Deliver Here
+                  {isSubmitting ? 'Saving...' : 'Save And Deliver Here'}
                 </button>
               </Col>
             </Row>

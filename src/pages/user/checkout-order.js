@@ -3,37 +3,33 @@ import { BreadcrumbOne } from '../../components/Breadcrumb';
 import Link from 'next/link';
 import { Container, Row, Col } from 'react-bootstrap';
 import { connect } from 'react-redux';
+import { useRouter } from 'next/router';
 import { UserDetail, CheckOutOrderList } from '../../components/Checkout';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useAddOrder } from '../../hooks/orders';
-import { deleteFromCart } from '../../redux/actions/cartActions';
-import { useToasts } from 'react-toast-notifications';
+import { deleteAllFromCart } from '../../redux/actions/cartActions';
+import { buildDeliveryAddress } from '../../utils';
 
-const checkOutOrder = ({ cartItems, deleteFromCart }) => {
-  let cartTotalPrice = 0;
-  const { mutate: createOrder } = useAddOrder();
-  const { addToast } = useToasts();
+const checkOutOrder = ({ cartItems, deleteAllFromCart }) => {
+  const { mutate: createOrder, isLoading: isSubmitting } = useAddOrder();
+  const router = useRouter();
+
   const confirmUserAndDeliveryOrder = (user) => {
     const orderDetailPayload = [];
     let total_price = 0;
-    let full_addr = '';
-    //set delivery address
-    if (user.deliveryType == 1) {
-      full_addr = user.companyAddress + ' Singapore ' + user.companyPostal;
-    } else {
-      full_addr = user.deliveryAddress + ' Singapore ' + user.deliveryPostal;
-    }
-    cartItems.map((item) => {
+    const full_addr = buildDeliveryAddress(user, user.deliveryType);
+
+    cartItems.forEach((item) => {
       const orderItemTotalPrice = item?.quantity * item?.price_tier_1;
-      const payload = {
+      orderDetailPayload.push({
         product_id: item?.id,
         quantity: item?.quantity,
         price: orderItemTotalPrice,
         supplier_id: item?.supplier_id
-      };
+      });
       total_price += orderItemTotalPrice;
-      orderDetailPayload.push(payload);
     });
+
     const orderPayload = {
       user_id: user?.id,
       total_price,
@@ -43,11 +39,22 @@ const checkOutOrder = ({ cartItems, deleteFromCart }) => {
       lastName: user?.lastName,
       remarks: user?.remarks,
       deliveryAddress: full_addr,
-      contact: user?.phone | user?.mobile
+      contact: user?.phone || user?.mobile
     };
-    createOrder({ order: orderPayload, orderDetails: orderDetailPayload });
-    cartItems.map((p) => deleteFromCart(p, addToast));
+
+    createOrder(
+      { order: orderPayload, orderDetails: orderDetailPayload },
+      {
+        onSuccess: () => {
+          // Only empty the cart once the order is saved, so a failed
+          // checkout can simply be retried.
+          deleteAllFromCart(null);
+          router.push('/user/my-account');
+        }
+      }
+    );
   };
+
   return (
     <LayoutTwo>
       <BreadcrumbOne
@@ -74,6 +81,7 @@ const checkOutOrder = ({ cartItems, deleteFromCart }) => {
               <UserDetail
                 cartItems={cartItems}
                 confirmUserAndDeliveryOrder={confirmUserAndDeliveryOrder}
+                isSubmitting={isSubmitting}
               />
             </Col>
             <Col xl={6} md={6} lg={6} sm={12} xs={12}>
@@ -92,8 +100,8 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    deleteFromCart: (item, addToast) => {
-      dispatch(deleteFromCart(item, addToast));
+    deleteAllFromCart: (addToast) => {
+      dispatch(deleteAllFromCart(addToast));
     }
   };
 };
