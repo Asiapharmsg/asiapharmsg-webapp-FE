@@ -5,6 +5,7 @@ import useFetchUserOrders from './_useFetchUserOrders';
 import useFetchOrderdetailsByOrderId from './_useFetchOrderdetailsByOrderId';
 //import useUpdateOrderStatus from './_useUpdateOrderStatus';
 import useUpdateOrderDetailsStatus from './_useUpdateOrderDetailsStatus';
+import useCancelOrder from './_useCancelOrder';
 
 export {
   useFetchOrders,
@@ -14,4 +15,5 @@ export {
   useFetchOrderdetailsByOrderId,
   //useUpdateOrderStatus,
   useUpdateOrderDetailsStatus,
+  useCancelOrder,
 };

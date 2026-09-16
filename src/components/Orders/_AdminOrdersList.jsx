@@ -3,8 +3,10 @@ import { useSelector } from 'react-redux';
 import {
   useFetchOrders,
   useUpdateOrderDetailsStatus,
-  useFetchOrderdetailsByOrderId
+  useFetchOrderdetailsByOrderId,
+  useCancelOrder
 } from '../../hooks/orders';
+import { Modal, Button } from 'react-bootstrap';
 import dayjs from 'dayjs';
 import { getOrderStatus } from '../../utils';
 import { IoMdEye } from 'react-icons/io';
@@ -47,29 +49,22 @@ export default function AdminOrdersList() {
     useUpdateOrderDetailsStatus();
   const { data: orderdetails, status: detailsLoading } =
     useFetchOrderdetailsByOrderId(selectedOrder?.id);
+  const { mutate: cancelOrder, isLoading: isCancelling } = useCancelOrder();
 
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [deliveryAddress, setDeliveryAddress] = useState(false);
   const [deliveryName, setDeliveryName] = useState(false);
   const [deliveryRemarks, setDeliveryRemarks] = useState(false);
-  const [cancellingId, setCancellingId] = useState(null);
+  const [showCancelModal, setShowCancelModal] = useState(false);
 
-  // Admin-only override: the vendor dropdown cannot reach this status.
-  const cancelOrderLine = (line) => {
-    const confirmed = window.confirm(
-      `Cancel order line ${line?.id} (${line?.product?.name})? This cannot be undone from the admin screen.`
-    );
-    if (!confirmed) return;
-    setCancellingId(line.id);
-    updateOrderDetailsStatus(
-      {
-        orderDetails: [
-          { id: line.id, status: 6, remarks: line?.remarks || '' }
-        ],
-        clientEmail: userInfo?.email
-      },
-      { onSettled: () => setCancellingId(null) }
-    );
+  // Cancelling is order-level: the server moves the order and every line at once.
+  const confirmCancelOrder = () => {
+    cancelOrder(selectedOrder?.id, {
+      onSuccess: () => {
+        setShowCancelModal(false);
+        setSelectedOrder({ ...selectedOrder, status: 6 });
+      }
+    });
   };
 
   useEffect(() => {
@@ -343,17 +338,68 @@ export default function AdminOrdersList() {
         <>
           <h3>Order details</h3>
           <>
-            <div className="single-input-item ">
-              <button
-                className="lezada-button lezada-button--small product-content__ofs space-mr--10"
-                onClick={() => {
-                  setSelectedOrder(null);
-                  setShowOrderDetails(false);
-                }}
-              >
-                Back
-              </button>
+            <div className="d-flex align-items-center justify-content-between flex-wrap">
+              <div className="single-input-item ">
+                <button
+                  className="lezada-button lezada-button--small product-content__ofs space-mr--10"
+                  onClick={() => {
+                    setSelectedOrder(null);
+                    setShowOrderDetails(false);
+                  }}
+                >
+                  Back
+                </button>
+              </div>
+              {Number(selectedOrder?.status) !== 6 && (
+                <div className="filter-dropdown mb-0">
+                  <div className="filterItem m-0">
+                    <select
+                      name="orderAction"
+                      style={{ minWidth: '160px' }}
+                      value=""
+                      onChange={(e) => {
+                        if (e.target.value === 'cancel') {
+                          setShowCancelModal(true);
+                        }
+                      }}
+                    >
+                      <option value="">Order Action</option>
+                      <option value="cancel">Cancel Order</option>
+                    </select>
+                  </div>
+                </div>
+              )}
             </div>
+
+            <Modal
+              show={showCancelModal}
+              onHide={() => setShowCancelModal(false)}
+              centered
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>Confirm Cancel Order?</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                Cancel order will mark the order and individual order line item
+                as cancelled.
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="secondary"
+                  disabled={isCancelling}
+                  onClick={() => setShowCancelModal(false)}
+                >
+                  Abort
+                </Button>
+                <Button
+                  variant="danger"
+                  disabled={isCancelling}
+                  onClick={confirmCancelOrder}
+                >
+                  {isCancelling ? 'Cancelling...' : 'Confirm Cancellation'}
+                </Button>
+              </Modal.Footer>
+            </Modal>
 
             <br />
           </>
@@ -454,7 +500,6 @@ export default function AdminOrdersList() {
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td></td>
                       </tr>
                       <tr>
                         <td>
@@ -478,9 +523,6 @@ export default function AdminOrdersList() {
                         <td>
                           <b>Remarks</b>
                         </td>
-                        <td>
-                          <b>Action</b>
-                        </td>
                       </tr>
                       {getOrderDetailsWithGroupedVendor[key].map((o) => (
                         <tr>
@@ -495,20 +537,6 @@ export default function AdminOrdersList() {
                           <td>${o?.price}</td>
                           <td>{getOrderStatus(o?.status)}</td>
                           <td>{o?.remarks}</td>
-                          <td>
-                            {Number(o?.status) !== 6 && (
-                              <button
-                                type="button"
-                                className="lezada-button lezada-button--small"
-                                disabled={cancellingId === o?.id}
-                                onClick={() => cancelOrderLine(o)}
-                              >
-                                {cancellingId === o?.id
-                                  ? 'Cancelling...'
-                                  : 'Cancel'}
-                              </button>
-                            )}
-                          </td>
                         </tr>
                       ))}
                     </React.Fragment>
