@@ -381,7 +381,7 @@ export default function AdminOrdersList() {
               </Modal.Header>
               <Modal.Body>
                 Cancel order will mark the order and individual order line item
-                as cancelled.
+                as cancelled, and nothing on the billing row is touched.
               </Modal.Body>
               <Modal.Footer>
                 <Button
