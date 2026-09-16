@@ -52,6 +52,25 @@ export default function AdminOrdersList() {
   const [deliveryAddress, setDeliveryAddress] = useState(false);
   const [deliveryName, setDeliveryName] = useState(false);
   const [deliveryRemarks, setDeliveryRemarks] = useState(false);
+  const [cancellingId, setCancellingId] = useState(null);
+
+  // Admin-only override: the vendor dropdown cannot reach this status.
+  const cancelOrderLine = (line) => {
+    const confirmed = window.confirm(
+      `Cancel order line ${line?.id} (${line?.product?.name})? This cannot be undone from the admin screen.`
+    );
+    if (!confirmed) return;
+    setCancellingId(line.id);
+    updateOrderDetailsStatus(
+      {
+        orderDetails: [
+          { id: line.id, status: 6, remarks: line?.remarks || '' }
+        ],
+        clientEmail: userInfo?.email
+      },
+      { onSettled: () => setCancellingId(null) }
+    );
+  };
 
   useEffect(() => {
     if (orders) {
@@ -234,7 +253,7 @@ export default function AdminOrdersList() {
                 setFilterOptions({ ...filterOptions, status: e.target.value });
               }}
             >
-              {[0, 1, 2, 3, 5].map((item) => (
+              {[0, 1, 2, 3, 5, 6].map((item) => (
                 <option value={item}>
                   {item === 0 ? 'All' : getOrderStatus(item)}
                 </option>
@@ -435,6 +454,7 @@ export default function AdminOrdersList() {
                         <td></td>
                         <td></td>
                         <td></td>
+                        <td></td>
                       </tr>
                       <tr>
                         <td>
@@ -458,6 +478,9 @@ export default function AdminOrdersList() {
                         <td>
                           <b>Remarks</b>
                         </td>
+                        <td>
+                          <b>Action</b>
+                        </td>
                       </tr>
                       {getOrderDetailsWithGroupedVendor[key].map((o) => (
                         <tr>
@@ -472,6 +495,20 @@ export default function AdminOrdersList() {
                           <td>${o?.price}</td>
                           <td>{getOrderStatus(o?.status)}</td>
                           <td>{o?.remarks}</td>
+                          <td>
+                            {Number(o?.status) !== 6 && (
+                              <button
+                                type="button"
+                                className="lezada-button lezada-button--small"
+                                disabled={cancellingId === o?.id}
+                                onClick={() => cancelOrderLine(o)}
+                              >
+                                {cancellingId === o?.id
+                                  ? 'Cancelling...'
+                                  : 'Cancel'}
+                              </button>
+                            )}
+                          </td>
                         </tr>
                       ))}
                     </React.Fragment>

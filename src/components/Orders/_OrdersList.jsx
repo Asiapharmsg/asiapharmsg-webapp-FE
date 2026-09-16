@@ -363,7 +363,7 @@ export default function OrdersList() {
                 setFilterOptions({ ...filterOptions, status: e.target.value });
               }}
             >
-              {[0, 1, 2, 3, 5].map((item) => (
+              {[0, 1, 2, 3, 5, 6].map((item) => (
                 <option value={item}>
                   {item === 0 ? 'All' : getOrderStatus(item)}
                 </option>

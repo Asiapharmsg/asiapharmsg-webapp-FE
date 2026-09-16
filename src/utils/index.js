@@ -136,6 +136,8 @@ export const getOrderStatus = (status) => {
       return 'Closed';
     case '5':
       return 'Partially Fulfilled';
+    case '6':
+      return 'Cancelled';
     case '99':
       return 'Invalid';
     default:
@@ -147,5 +149,6 @@ export const getCompleteOrderStatus = (orderdetails) => {
   if (orderdetails.every((od) => od.status == 1)) return 1;
   else if (orderdetails.every((od) => od.status == 2)) return 2;
   else if (orderdetails.every((od) => od.status == 3)) return 3;
+  else if (orderdetails.every((od) => od.status == 6)) return 6;
   else return 5;
 };
