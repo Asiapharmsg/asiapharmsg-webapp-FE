@@ -6,6 +6,7 @@ import useFetchOrderdetailsByOrderId from './_useFetchOrderdetailsByOrderId';
 //import useUpdateOrderStatus from './_useUpdateOrderStatus';
 import useUpdateOrderDetailsStatus from './_useUpdateOrderDetailsStatus';
 import useCancelOrder from './_useCancelOrder';
+import useMarkOrderPartial from './_useMarkOrderPartial';
 
 export {
   useFetchOrders,
@@ -16,4 +17,5 @@ export {
   //useUpdateOrderStatus,
   useUpdateOrderDetailsStatus,
   useCancelOrder,
+  useMarkOrderPartial,
 };

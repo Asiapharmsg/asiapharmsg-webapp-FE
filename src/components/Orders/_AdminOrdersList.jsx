@@ -4,7 +4,8 @@ import {
   useFetchOrders,
   useUpdateOrderDetailsStatus,
   useFetchOrderdetailsByOrderId,
-  useCancelOrder
+  useCancelOrder,
+  useMarkOrderPartial
 } from '../../hooks/orders';
 import { Modal, Button } from 'react-bootstrap';
 import dayjs from 'dayjs';
@@ -50,12 +51,26 @@ export default function AdminOrdersList() {
   const { data: orderdetails, status: detailsLoading } =
     useFetchOrderdetailsByOrderId(selectedOrder?.id);
   const { mutate: cancelOrder, isLoading: isCancelling } = useCancelOrder();
+  const { mutate: markOrderPartial, isLoading: isMarkingPartial } =
+    useMarkOrderPartial();
 
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [deliveryAddress, setDeliveryAddress] = useState(false);
   const [deliveryName, setDeliveryName] = useState(false);
   const [deliveryRemarks, setDeliveryRemarks] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showPartialModal, setShowPartialModal] = useState(false);
+
+  // Partially Fulfilled is a header-only status change: the lines are left
+  // alone, so the per-line detail that makes the order partial is preserved.
+  const confirmMarkPartial = () => {
+    markOrderPartial(selectedOrder?.id, {
+      onSuccess: () => {
+        setShowPartialModal(false);
+        setSelectedOrder({ ...selectedOrder, status: 5 });
+      }
+    });
+  };
 
   // Cancelling is order-level: the server moves the order and every line at once.
   const confirmCancelOrder = () => {
@@ -361,9 +376,17 @@ export default function AdminOrdersList() {
                         if (e.target.value === 'cancel') {
                           setShowCancelModal(true);
                         }
+                        if (e.target.value === 'partial') {
+                          setShowPartialModal(true);
+                        }
                       }}
                     >
                       <option value="">Order Action</option>
+                      {Number(selectedOrder?.status) !== 5 && (
+                        <option value="partial">
+                          Mark Partially Fulfilled
+                        </option>
+                      )}
                       <option value="cancel">Cancel Order</option>
                     </select>
                   </div>
@@ -397,6 +420,37 @@ export default function AdminOrdersList() {
                   onClick={confirmCancelOrder}
                 >
                   {isCancelling ? 'Cancelling...' : 'Confirm Cancellation'}
+                </Button>
+              </Modal.Footer>
+            </Modal>
+
+            <Modal
+              show={showPartialModal}
+              onHide={() => setShowPartialModal(false)}
+              centered
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>Mark Order Partially Fulfilled?</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                This is just a status change. The individual order line items
+                keep their current statuses, and no bill reversal takes place
+                automatically.
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="secondary"
+                  disabled={isMarkingPartial}
+                  onClick={() => setShowPartialModal(false)}
+                >
+                  Abort
+                </Button>
+                <Button
+                  variant="primary"
+                  disabled={isMarkingPartial}
+                  onClick={confirmMarkPartial}
+                >
+                  {isMarkingPartial ? 'Updating...' : 'Confirm Status Change'}
                 </Button>
               </Modal.Footer>
             </Modal>
